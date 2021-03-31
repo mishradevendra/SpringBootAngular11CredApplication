@@ -1,18 +1,20 @@
 package com.newsoft.users.model;
 
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
-import org.hibernate.validator.constraints.Email;
-import org.hibernate.validator.constraints.NotEmpty;
+import org.hibernate.validator.constraints.Length;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import lombok.AllArgsConstructor;
@@ -28,27 +30,31 @@ public class User {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long id;
+	private Integer id;
 
 	@Column(name = "first_name", nullable = false)
-	@NotEmpty
-	@Size(min = 2, message = "First Name should have at least 2 characters")
+	@Length(min = 4, message = "*Your user name must have at least 5 characters")
+	@NotEmpty(message = "*Please provide a user name")
 	private String firstName;
 
 	@Column(name = "last_name")
 	private String lastName;
-	
-	@SuppressWarnings("deprecation")
-	@NotEmpty(message = "Email must not be empty or null")
-	@Email(message = "Email should be a valid email")
+
+	@Email(message = "*Please provide a valid Email")
+	@NotEmpty(message = "*Please provide an email")
 	@Column(name = "email_id")
 	private String emailId;
+
+	@Column(name = "password")
+	@Length(min = 4, message = "*Your password must have at least 5 characters")
+	@NotEmpty(message = "*Please provide your password")
+	private String password;
 
 	@DateTimeFormat(pattern = "yyyy-MM-dd")
 	@Column(name = "dob")
 	private Date dob;
 
-	@NotNull(message = "Please enter age")
+	@NotNull(message = "*Please enter age")
 	@Column(name = "AGE")
 	private Integer age;
 
@@ -78,5 +84,14 @@ public class User {
 
 	@Column(name = "country")
 	private String country;
+
+	@Column(name = "active")
+	private Boolean active;
+
+	// @ManyToMany(cascade = CascadeType.MERGE)
+	// @JoinTable(name = "user_role", joinColumns = @JoinColumn(name = "user_id"),
+	// inverseJoinColumns = @JoinColumn(name = "role_id"))
+	@ElementCollection
+	private List<String> roles;
 
 }
